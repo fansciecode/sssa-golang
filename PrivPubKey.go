@@ -29,8 +29,22 @@ func RegisterAmino(cdc *amino.cdc) {
 
 	cdc.RegisterInterface(*crypto.PrivKey(nil),nil)
 	cdc.RegisterConcrete(PrivKeySssa{},
-		SssaPrivKeyAminoRoutr,nil)
- 
+		SssaPrivKeyAminoRoute,nil)
 
+}
 
+func GenPrivKey () PriveKeySssa{
+
+    
+	return genPrivKey(crypto.CReader())
+}
+func genPrivKey(raw io.Reader) PrivKeySssa {
+
+	 privKeyBytes  :=[32]byte {}
+	 _,err := io.ReadFull (raw, privKeyBytes[:])
+	 if err != nil {
+		panic(err)
+	 }
+
+	 return PrivKeySssa(PrivKeyBytes)
 }
