@@ -1,10 +1,12 @@
 package sssa 
 import {
-         "bytes"
+	"crypto/sha256"
+        "bytes"
 	"fmt"
 	"io"
         "github.com/tendermint/tendermint/crypto"
 	amino "github.com/tendermint/go-amino"
+	"github/tendermint/tendermint/crypto/secp256k1"
 	"flag"
 	"io/ioutil"
 	"os"
@@ -35,9 +37,7 @@ func RegisterAmino(cdc *amino.cdc) {
 
 }
 
-
-
-
+/*
 func (privKey PrivKeySssa) Sign(msg  []byte )([]byte ,error) {
 
 	priv,_ := sssa.Create(2,3,privKey)
@@ -47,15 +47,19 @@ func (privKey PrivKeySssa) Sign(msg  []byte )([]byte ,error) {
 	}
 
          return  sig.Serialize(),nil
-	
-
 }
+*/
 
+var _crypto.PrivKey = PrivKeySssa{}
 
+type PrivKeySssa  [32]byte  
+
+func (privKey PrivKeySssa) Bytes() []byte {
+	return cdc.MustMarshalBinaryBare(privKey)
+}
 
 func GenPrivKey () PriveKeySssa{
 
-    
 	return genPrivKey(crypto.CReader())
 }
 func genPrivKey(raw io.Reader) PrivKeySssa {
@@ -92,6 +96,25 @@ func splitSecret(secret []byte) []string {
 		if err != nil {
 		fmt.Println("Unable to create Shamir's Shares")
 		os.Exit(1)
-        }  
- 																								return shares
-																							        }
+        } 																								return shares
+}
+func decrypt (){
+
+	var n int
+		var shares []string
+		fmt.Print("Number of slices: ")
+		fmt.Scan(&n)
+		if n < 1 {
+		fmt.Println("You can't inster a negative integer")
+		os.Exit(1)
+		}
+		for i := 0; i < n; i++ {
+		var share string
+		fmt.Print("Insert share :")
+		fmt.Scanln(&share)
+		shares = append(shares, share)
+				}																				secret, err := sssa.Combine(shares)
+			if err != nil {																						fmt.Println("Error during Decryption")																			os.Exit(1)
+	}
+	fmt.Println(secret)
+}
